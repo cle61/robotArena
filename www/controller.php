@@ -13,8 +13,8 @@ include "board.php";
 
 if(!isset($_SESSION['arena'])){
   $arena = new Arena\Arena($ascii_board);
-  $robotA = new Robot\Roger("A");
-  $robotB = new Robot\MadShooter("B");
+  $robotA = new Robot\Chappie("A");
+  $robotB = new Robot\TourneEnRond("B");
   $arena->loadRobots([$robotA,$robotB]);
 }else{
   $arena = unserialize($_SESSION['arena']);

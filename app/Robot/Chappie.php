@@ -14,28 +14,28 @@ use Arena\RobotOrder;
 
 class Chappie implements RobotInterface
 {
-    private $name = null; // A ou B (c'est vraiment de la merde comme choix)
-    private $life = 10;
-    private $nameEnemy = null;
-    private $lifeEnemy = 10;
-    private $myPosition = null;
-    private $positionEnemyLast = null;
-    private $positionEnemy = null;
-    private $lastDirectionEnemy = null;
-    private $goToUp = false;
-    private $goToLeft = false;
-    private $goToRight = false;
-    private $goToDown = false;
-    private $direction = null;  // direction par où l'on s'est fait tirer dessus
-    private $ordersNb = null;
+    public $name = null; // A ou B (c'est vraiment de la merde comme choix)
+    public $life = 10;
+    public $nameEnemy = null;
+    public $lifeEnemy = 10;
+    public $myPosition = null;
+    public $positionEnemyLast = null;
+    public $positionEnemy = null;
+    public $lastDirectionEnemy = null;
+    public $goToUp = false;
+    public $goToLeft = false;
+    public $goToRight = false;
+    public $goToDown = false;
+    public $direction = null;  // direction par où l'on s'est fait tirer dessus
+    public $ordersNb = null;
 
     // VARIABLE TACTIQUE
-    private $objectifDone = false;
-    private $objectif = array();
+    public $objectifDone = false;
+    public $objectif = array();
     // X , Y , direction pour shot
 
     // HISTORIQUE
-    private $historiqueEnemy = array();
+    public $historiqueEnemy = array();
 
     public function __construct($name)
     {
@@ -436,14 +436,48 @@ class Chappie implements RobotInterface
                 }
             } else {
                 // RANDOM
-                // On vérifie si l'ennemie est en face
+                // On vérifie si l'ennemie est sur la meme colonne ou la meme ligne
+                if($this->myPosition->x == $this->positionEnemy['X'] || $this->myPosition->y == $this->positionEnemy['Y']) {
+                    if ($this->myPosition->x > $this->positionEnemy['X']) {
+                        switch ($this->myPosition->direction) {
+                            case 'N':
+                                $this->ordersNb = 0;
+                                break;
+                            case 'S':
+                                $this->ordersNb = 1;
+                                break;
+                            case 'O':
+                                $this->ordersNb = 3;
+                                break;
+                            case 'E':
+                                $this->ordersNb = 1;
+                        }
+                    } elseif ($this->myPosition->x < $this->positionEnemy['X']) {
+                        switch ($this->myPosition->direction) {
+                            case 'N':
+                                $this->ordersNb = 1;
+                                break;
+                            case 'S':
+                                $this->ordersNb = 0;
+                                break;
+                            case 'O':
+                                $this->ordersNb = 1;
+                                break;
+                            case 'E':
+                                $this->ordersNb = 3;
+                        }
+                    }
+
+                }
+
                 $this->ordersNb = rand(0, 3);
             }
 
 
         } else {
             // RANDOM
-            $this->ordersNb = rand(0, 3);
+
+            $this->ordersNb = rand(0, 2);
         }
 
         $this->updatePosition();

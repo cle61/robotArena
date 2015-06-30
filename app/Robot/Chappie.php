@@ -436,6 +436,7 @@ class Chappie implements RobotInterface
                 }
             } else {
                 // RANDOM
+                // On vérifie si l'ennemie est en face
                 $this->ordersNb = rand(0, 3);
             }
 

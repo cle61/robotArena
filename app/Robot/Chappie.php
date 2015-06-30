@@ -478,7 +478,7 @@ class Chappie implements RobotInterface
                                 $this->ordersNb = 3;
                                 break;
                             case 'O':
-                                $this->ordersNb = 2;
+                                $this->ordersNb = 0;
                                 break;
                             case 'E':
                                 $this->ordersNb = 1;
@@ -498,7 +498,7 @@ class Chappie implements RobotInterface
                                 $this->ordersNb = 1;
                                 break;
                             case 'O':
-                                $this->ordersNb = 2;
+                                $this->ordersNb = 3;
                                 break;
                         }
                     } elseif ($this->myPosition->x < $this->positionEnemy['X']) {
@@ -510,7 +510,7 @@ class Chappie implements RobotInterface
                                 $this->ordersNb = 0;
                                 break;
                             case 'E':
-                                $this->ordersNb = 2;
+                                $this->ordersNb = 3;
                                 break;
                             case 'O':
                                 $this->ordersNb = 1;

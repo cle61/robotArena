@@ -14,51 +14,32 @@ use Arena\RobotOrder;
 
 class Chappie implements RobotInterface
 {
-    public $name = null; // A ou B (c'est vraiment de la merde comme choix)
-    public $life = 10;
-    public $nameEnemy = null;
-    public $lifeEnemy = 10;
-    public $myPosition = null;
-    public $positionEnemyLast = null;
-    public $positionEnemy = null;
-    public $lastDirectionEnemy = null;
-    public $goToUp = false;
-    public $goToLeft = false;
-    public $goToRight = false;
-    public $goToDown = false;
-    public $direction = null;  // direction par où l'on s'est fait tirer dessus
-    public $ordersNb = null;
-
-    // BOARD
-    public $board = null;
-    public $ascii_board = <<<EOF
-xxxxxxxxxxxxxx
-xxxxxxxxxxxxxx
-xx..........xx
-xx..........xx
-xx..A.......xx
-xx..........xx
-xx..........xx
-xx..........xx
-xx.......B..xx
-xx..........xx
-xx..........xx
-xxxxxxxxxxxxxx
-xxxxxxxxxxxxxx
-EOF;
+    private $name = null; // A ou B (c'est vraiment de la merde comme choix)
+    private $life = 10;
+    private $nameEnemy = null;
+    private $lifeEnemy = 10;
+    private $myPosition = null;
+    private $positionEnemyLast = null;
+    private $positionEnemy = null;
+    private $lastDirectionEnemy = null;
+    private $goToUp = false;
+    private $goToLeft = false;
+    private $goToRight = false;
+    private $goToDown = false;
+    private $direction = null;  // direction par où l'on s'est fait tirer dessus
+    private $ordersNb = null;
 
     // VARIABLE TACTIQUE
-    public $objectifDone = false;
-    public $objectif = array();
+    private $objectifDone = false;
+    private $objectif = array();
     // X , Y , direction pour shot
 
     // HISTORIQUE
-    public $historiqueEnemy = array();
+    private $historiqueEnemy = array();
 
     public function __construct($name)
     {
         $this->name = $name;
-        $this->defineBoard();
 
         if ($name == 'A') {
             $this->nameEnemy = 'B';
@@ -550,8 +531,4 @@ EOF;
         }
     }
 
-    public function defineBoard()
-    {
-        // ne sert à rien
-    }
 }

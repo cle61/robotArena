@@ -80,9 +80,6 @@ class Chappie implements RobotInterface
         $this->positionEnemyLast = $this->positionEnemy;
         $this->positionEnemy = null;
 
-        /*echo '<pre>';
-        var_dump($data);
-        echo '</pre>';*/
         // On récupère la nouvelle position de l'ennemie
         foreach ($data as $ligne => $value) {
             $lookObstacleHaut = $lookObstacleMilieu = $lookObstacleBas = false;
@@ -123,10 +120,6 @@ class Chappie implements RobotInterface
                 }
             }
         }
-        /*echo '<pre>';
-        var_dump($this->historiqueEnemy);
-        var_dump($this->positionEnemy);
-        echo '</pre>';*/
     }
 
     public function notifyEnnemy($direction)
@@ -171,48 +164,50 @@ class Chappie implements RobotInterface
 
                 // Si le robot adverse est resté 3 tour sur la meme case
                 if ($roundstay >= 2) {
-                    // On enregistre les 4 positions où Chappie peut brain l'ennemie pour ensuite tester la position à enregistrer comme objectif (Hors du champs de vue de l'ennemie)
-                    // POSITION AU DESSUS DE L'ADVERSAIRE
-                    $allObjectifs[] = array('X' => $this->positionEnemy['X'],
-                        'Y' => $this->positionEnemy['Y'] - 3,
-                        'direction' => 'S');
-                    // POSITION AU DESSOUS DE L'ADVERSAIRE
-                    $allObjectifs[] = array('X' => $this->positionEnemy['X'],
-                        'Y' => $this->positionEnemy['Y'] + 3,
-                        'direction' => 'N');
-                    // POSITION A GAUCHE DE L'AVDVERSAIRE
-                    $allObjectifs[] = array('X' => $this->positionEnemy['X'] - 3,
-                        'Y' => $this->positionEnemy['Y'],
-                        'direction' => 'E');
-                    // POSITION A DROITE DE L'ADVERSAIRE
-                    $allObjectifs[] = array('X' => $this->positionEnemy['X'] + 3,
-                        'Y' => $this->positionEnemy['Y'],
-                        'direction' => 'W');
+                    if($this->myPosition->x != $this->positionEnemy['X'] && $this->myPosition->y != $this->positionEnemy['Y']) {
+                        // On enregistre les 4 positions où Chappie peut brain l'ennemie pour ensuite tester la position à enregistrer comme objectif (Hors du champs de vue de l'ennemie)
+                        // POSITION AU DESSUS DE L'ADVERSAIRE
+                        $allObjectifs[] = array('X' => $this->positionEnemy['X'],
+                            'Y' => $this->positionEnemy['Y'] - 3,
+                            'direction' => 'S');
+                        // POSITION AU DESSOUS DE L'ADVERSAIRE
+                        $allObjectifs[] = array('X' => $this->positionEnemy['X'],
+                            'Y' => $this->positionEnemy['Y'] + 3,
+                            'direction' => 'N');
+                        // POSITION A GAUCHE DE L'AVDVERSAIRE
+                        $allObjectifs[] = array('X' => $this->positionEnemy['X'] - 3,
+                            'Y' => $this->positionEnemy['Y'],
+                            'direction' => 'E');
+                        // POSITION A DROITE DE L'ADVERSAIRE
+                        $allObjectifs[] = array('X' => $this->positionEnemy['X'] + 3,
+                            'Y' => $this->positionEnemy['Y'],
+                            'direction' => 'W');
 
-                    // On vérifie quelles positions sont libre
-                    foreach ($allObjectifs as $key => $value) {
-                        if ($value['X'] > 1 && $value['X'] < 12 && $value['Y'] > 1 && $value['Y'] < 11) {
-                            $objectifLibre[] = $allObjectifs[$key];
+                        // On vérifie quelles positions sont libre
+                        foreach ($allObjectifs as $key => $value) {
+                            if ($value['X'] > 1 && $value['X'] < 12 && $value['Y'] > 1 && $value['Y'] < 11) {
+                                $objectifLibre[] = $allObjectifs[$key];
+                            }
                         }
-                    }
 
-                    // On prend la plus près et celle où ne tire pas l'ennemie
-                    foreach ($objectifLibre as $key => $value) {
-                        //
-                        if($this->lastDirectionEnemy) {
-                            if($value['direction'] != $this->inverseDirection($this->lastDirectionEnemy)) {
+                        // On prend la plus près et celle où ne tire pas l'ennemie
+                        foreach ($objectifLibre as $key => $value) {
+                            //
+                            if ($this->lastDirectionEnemy) {
+                                if ($value['direction'] != $this->inverseDirection($this->lastDirectionEnemy)) {
+                                    $this->objectif = $value;
+                                }
+                            } else {
                                 $this->objectif = $value;
                             }
-                        } else {
-                            $this->objectif = $value;
                         }
                     }
                 }
             }
         } else {
             // On vérifie si l'objectif est terminé
-            if($this->myPosition == $this->objectif) {
-                if($this->positionEnemy != $this->positionEnemyLast && !empty($this->positionEnemy)) {
+            if($this->myPosition->x == $this->objectif['X'] && $this->myPosition->y == $this->objectif['Y'] && $this->myPosition->direction == $this->objectif['direction']) {
+                if(($this->positionEnemy['X'] != $this->positionEnemyLast['X'] || $this->positionEnemy['Y'] != $this->positionEnemyLast['Y']) && !empty($this->positionEnemy)) {
                     $this->objectif = null;
                 }
             }
@@ -228,7 +223,6 @@ class Chappie implements RobotInterface
             } else {
                 if($this->myPosition->y != $this->objectif['Y']) {
                     if($this->myPosition->y > $this->objectif['Y']) {
-                        var_dump('yolo');
                         switch($this->myPosition->direction) {
                             case 'N':
                                 // On avance
@@ -248,7 +242,6 @@ class Chappie implements RobotInterface
                                 break;
                         }
                     } else {
-                        var_dump('yolo2');
                         switch ($this->myPosition->direction) {
                             case 'N':
                                 // On tourne à droite
@@ -270,31 +263,25 @@ class Chappie implements RobotInterface
                     }
                 } elseif ($this->myPosition->x != $this->objectif['X']) {
                     if($this->myPosition->x > $this->objectif['X']) {
-                        var_dump('yolo3');
                         switch($this->myPosition->direction) {
                             case 'N':
                                 // On tourne à gauche
-                                var_dump('yoloa');
                                 $this->ordersNb = 0;
                                 break;
                             case 'S':
                                 // On toune à droite
-                                var_dump('yolob');
                                 $this->ordersNb = 1;
                                 break;
                             case 'W':
                                 //on tourne avance
-                                var_dump('yoloc');
                                 $this->ordersNb = 2;
                                 break;
                             case 'E':
                                 // On tourne à droite
-                                var_dump('yolod');
                                 $this->ordersNb = 1;
                                 break;
                         }
                     } else {
-                        var_dump('yolo4');
                         switch ($this->myPosition->direction) {
                             case 'N':
                                 // On tourne à droite
@@ -435,7 +422,6 @@ class Chappie implements RobotInterface
                     }
                 }
             } else {
-                // RANDOM
                 // On vérifie si l'ennemie est sur la meme colonne ou la meme ligne
                 if($this->myPosition->x == $this->positionEnemy['X'] || $this->myPosition->y == $this->positionEnemy['Y']) {
                     if ($this->myPosition->x > $this->positionEnemy['X']) {
@@ -451,6 +437,7 @@ class Chappie implements RobotInterface
                                 break;
                             case 'E':
                                 $this->ordersNb = 1;
+                                break;
                         }
                     } elseif ($this->myPosition->x < $this->positionEnemy['X']) {
                         switch ($this->myPosition->direction) {
@@ -465,27 +452,80 @@ class Chappie implements RobotInterface
                                 break;
                             case 'E':
                                 $this->ordersNb = 3;
+                                break;
+                        }
+                    } elseif ($this->myPosition->y > $this->positionEnemy['Y']) {
+                        switch ($this->myPosition->direction) {
+                            case 'N':
+                                $this->ordersNb = 3;
+                                break;
+                            case 'S':
+                                $this->ordersNb = 1;
+                                break;
+                            case 'O':
+                                $this->ordersNb = 1;
+                                break;
+                            case 'E':
+                                $this->ordersNb = 0;
+                                break;
+                        }
+                    }elseif ($this->myPosition->y < $this->positionEnemy['Y']) {
+                        switch ($this->myPosition->direction) {
+                            case 'N':
+                                $this->ordersNb = 1;
+                                break;
+                            case 'S':
+                                $this->ordersNb = 3;
+                                break;
+                            case 'O':
+                                $this->ordersNb = 2;
+                                break;
+                            case 'E':
+                                $this->ordersNb = 1;
+                                break;
                         }
                     }
-
+                } else {
+                    if ($this->myPosition->x > $this->positionEnemy['X']) {
+                        switch ($this->myPosition->direction) {
+                            case 'N':
+                                $this->ordersNb = 0;
+                                break;
+                            case 'S':
+                                $this->ordersNb = 1;
+                                break;
+                            case 'E':
+                                $this->ordersNb = 1;
+                                break;
+                            case 'O':
+                                $this->ordersNb = 2;
+                                break;
+                        }
+                    } elseif ($this->myPosition->x < $this->positionEnemy['X']) {
+                        switch ($this->myPosition->direction) {
+                            case 'N':
+                                $this->ordersNb = 1;
+                                break;
+                            case 'S':
+                                $this->ordersNb = 0;
+                                break;
+                            case 'E':
+                                $this->ordersNb = 2;
+                                break;
+                            case 'O':
+                                $this->ordersNb = 1;
+                                break;
+                        }
+                    }
                 }
-
-                $this->ordersNb = rand(0, 3);
             }
 
 
         } else {
-            // RANDOM
-
             $this->ordersNb = rand(0, 2);
         }
 
         $this->updatePosition();
-        /*var_dump($this->board);
-        var_dump($this->ascii_board);*/
-        var_dump($this->myPosition);
-        var_dump($this->positionEnemy);
-        var_dump($this->objectif);
         return $orders[$this->ordersNb];
     }
 
